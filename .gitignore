@@ -1,0 +1,24 @@
+# Secrets — never commit
+.env
+.env.local
+*.key
+
+# Python-generated files
+__pycache__/
+*.py[oc]
+build/
+dist/
+wheels/
+*.egg-info
+
+# Virtual environments
+.venv
+
+# Editors and OS
+.idea/
+.vscode/
+.DS_Store
+
+# Local test data
+*.sqlite3
+*.db
