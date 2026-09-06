@@ -5,6 +5,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from decimal import Decimal, ROUND_HALF_UP
 from enum import Enum
+import math
 from typing import Any, Union
 
 
@@ -117,10 +118,16 @@ def convert_temperature(
     source_scale = TemperatureScale.parse(from_scale)
     target_scale = TemperatureScale.parse(to_scale)
 
+    if isinstance(value, bool):
+        raise TypeError(f"Temperature value cannot be a boolean, got: {value}")
+
     try:
         numeric_val = float(value)
     except (ValueError, TypeError) as exc:
         raise TypeError(f"Temperature value must be a valid number, got: {value}") from exc
+
+    if not math.isfinite(numeric_val):
+        raise ValueError(f"Temperature value must be a finite number, got: {numeric_val}")
 
     # Enforce physical thermodynamic boundary (Absolute Zero)
     if source_scale == TemperatureScale.KELVIN and numeric_val < 0.0:

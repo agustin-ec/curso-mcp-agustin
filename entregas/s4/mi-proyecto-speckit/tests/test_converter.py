@@ -1,5 +1,6 @@
 """Unit tests for temperature conversion logic."""
 
+import math
 import unittest
 from src.converter import (
     AbsoluteZeroError,
@@ -156,6 +157,23 @@ class TestBoundaryValidation(unittest.TestCase):
         with self.assertRaises(AbsoluteZeroError) as ctx:
             convert_temperature(-500, "F", "C")
         self.assertIn("below absolute zero", str(ctx.exception).lower())
+
+    def test_boolean_inputs_rejected(self):
+        """Boolean inputs must be rejected with TypeError."""
+        with self.assertRaises(TypeError) as ctx:
+            convert_temperature(True, "C", "F")
+        self.assertIn("cannot be a boolean", str(ctx.exception))
+
+        with self.assertRaises(TypeError) as ctx:
+            convert_temperature(False, "C", "F")
+        self.assertIn("cannot be a boolean", str(ctx.exception))
+
+    def test_non_finite_inputs_rejected(self):
+        """NaN and Infinity values must be rejected with ValueError."""
+        for val in [float("nan"), float("inf"), float("-inf"), math.nan, math.inf]:
+            with self.assertRaises(ValueError) as ctx:
+                convert_temperature(val, "C", "F")
+            self.assertIn("must be a finite number", str(ctx.exception))
 
 
 if __name__ == "__main__":
